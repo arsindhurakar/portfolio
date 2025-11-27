@@ -1,0 +1,44 @@
+@layer base {
+  /* Headings */
+  h1 { 
+    @apply font-heading; 
+    font-size: var(--font-size-h1); 
+    margin-bottom: var(--spacing-sm); 
+  }
+  h2 { 
+    @apply font-heading; 
+    font-size: var(--font-size-h2); 
+    margin-bottom: var(--spacing-sm); 
+  }
+  h3 { 
+    @apply font-heading; 
+    font-size: var(--font-size-h3); 
+    margin-bottom: var(--spacing-sm); 
+  }
+  h4 { 
+    @apply font-heading; 
+    font-size: var(--font-size-h4); 
+    margin-bottom: var(--spacing-sm); 
+  }
+  h5 { 
+    @apply font-heading; 
+    font-size: var(--font-size-h5); 
+    margin-bottom: var(--spacing-sm); 
+  }
+  h6 { 
+    @apply font-heading; 
+    font-size: var(--font-size-h6); 
+    margin-bottom: var(--spacing-sm); 
+  }
+
+  /* Paragraphs */
+  p {
+    font-size: var(--font-size-p); 
+    margin-bottom: var(--spacing-md); 
+    line-height: 1.9;
+  }
+
+  small { 
+    font-size: var(--font-size-small); 
+  }
+}

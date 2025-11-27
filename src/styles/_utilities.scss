@@ -1,0 +1,5 @@
+@layer utilities {
+  .card {
+    @apply md:bg-gray-300/5 rounded-xl p-0 md:p-4 md:shadow-sm;
+  }
+}

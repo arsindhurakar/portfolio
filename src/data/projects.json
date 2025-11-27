@@ -1,0 +1,39 @@
+{
+    "projects":  [
+      {
+        "id": 1,
+        "title": "Lorem Ipsum 1",
+        "description": [
+          "Lorem ipsum ",
+          { "text": "dolor sit amet", "className": "text-primary" },
+          ", consectetur adipiscing elit. Donec laoreet tempor eros. Quisque tempor cursus eros. Etiam vel aliquam sapien. Maecenas ut laoreet justo. Integer fermentum vitae quam eget tincidunt. Aliquam a odio interdum, auctor quam at, euismod sem. Vestibulum consequat velit at tempus consequat. Maecenas non lacus mauris. Morbi quis augue lacinia, gravida dolor eu, vulputate nunc. Aenean luctus enim tellus, eget aliquam turpis finibus quis. Aliquam erat volutpat. Integer at ante lectus. Sed ultrices finibus leo et semper. Phasellus consequat odio feugiat, interdum est et, blandit lorem. Nullam libero massa, cursus sed orci non, pharetra posuere nisl."
+        ],
+        "backgroundUrl": "https://meromakaii.com/"
+        },
+      {
+        "id": 2,
+        "title": "Lorem Ipsum 2",
+        "description":[
+          "Sed eget consequat sapien. Sed luctus molestie sagittis. Nulla mollis commodo luctus. In hac habitasse platea dictumst. ",
+          {"text": "Ut facilisis lacus consectetur tellus fermentum", "className": "text-primary"},
+          ", sed mattis odio fringilla. Nulla euismod massa sit amet pretium tempor. Pellentesque lacinia eros elit, eget egestas leo auctor non. Praesent vel magna nec ligula vehicula dapibus. Curabitur elit justo, faucibus nec commodo a, feugiat id dui. In sodales ante at sapien molestie, ",
+          {"text": "nec fringilla nisi aliquet", "className": "text-primary"},
+          ". Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Nullam eget congue enim, quis tempor metus. Donec quis purus id risus ultricies commodo eu a massa. Integer iaculis, nibh at varius luctus, lectus tellus semper orci, at efficitur enim sem nec nisl."],
+        "backgroundUrl": "https://kathmandu-studio.vercel.app/"
+      },
+      {
+        "id": 3,
+        "title": "Lorem Ipsum 3",
+        "description":
+          "Mauris leo arcu, tempus id purus eu, euismod hendrerit leo. Quisque bibendum volutpat neque vitae fringilla. Nulla egestas tempor nulla, eleifend eleifend elit. Aenean tempor imperdiet ligula, et dictum quam congue nec. Aenean mi metus, commodo et pharetra ut, euismod eget augue. Phasellus scelerisque aliquam ligula, vel dictum est vehicula eu. Duis ultricies volutpat lacus, vitae dapibus felis ornare at. Sed non est enim. Curabitur pharetra efficitur erat in tincidunt. Praesent ut varius magna, at volutpat nisi. In scelerisque congue leo non congue.",
+        "backgroundUrl": "https://kathmandu-studio.vercel.app/"
+      },
+      {
+        "id": 4,
+        "title": "Lorem Ipsum 4",
+        "description":
+          "Nullam vestibulum sit amet dui vitae dignissim. In augue ligula, ornare eu purus sagittis, mollis finibus erat. Sed interdum lorem enim, nec auctor felis vestibulum et. Nam tincidunt interdum facilisis. Donec faucibus gravida nisi, a feugiat dui pulvinar eget. Quisque mollis mollis est quis sodales. Morbi a augue quis mi consectetur efficitur. Nulla pharetra, nulla ut congue viverra, risus purus fermentum massa, accumsan facilisis mi nibh eget ex. Sed leo mi, elementum sit amet dapibus vel, vehicula eget augue. Nunc sit amet consectetur augue. Nunc hendrerit posuere rutrum. Duis dignissim suscipit neque eu eleifend. Duis consectetur turpis ut odio luctus consequat. Ut vehicula faucibus ligula eu viverra.",
+        "backgroundUrl": "https://kathmandu-studio.vercel.app/"
+        }
+    ]
+}

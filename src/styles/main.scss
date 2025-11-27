@@ -1,0 +1,24 @@
+
+// @use "variables" as *;
+// @use "mixins" as *;
+// @use "global";
+
+// @use "components/button";
+// @use "components/header";
+// @use "components/footer";
+
+// @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+// @import url('https://fonts.googleapis.com/css2?family=BBH+Sans+Hegarty:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import "./variables";
+@import "./global";
+@import "./base";
+@import "./utilities";
+@import "./animation";
+
+@import "./components/button";
+@import "./components/input";
