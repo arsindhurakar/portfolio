@@ -10,6 +10,7 @@ export default defineConfig({
       pages: resolve(__dirname, "src/pages"),
       enums: resolve(__dirname, "src/enums"),
       context: resolve(__dirname, "src/context"),
+      utils: resolve(__dirname, "src/utils"),
     },
   },
 });

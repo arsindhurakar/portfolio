@@ -18,7 +18,7 @@
             "address": "Baneshwor, Kathmandu",
             "description": [
                     { 
-                        "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit." ,
+                        "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin blandit, mi hendrerit fringilla tempus, risus lectus gravida sapien, aliquam rhoncus lacus massa quis dolor. Nam ligula tortor, condimentum mattis ipsum eu, ullamcorper elementum sem." ,
                         "className": "text-secondaray"
                     }
                 ],

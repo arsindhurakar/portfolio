@@ -9,6 +9,7 @@ import { motion, Variants, easeOut, TargetAndTransition } from "framer-motion";
 import { Theme } from "context/ThemeContext";
 import { IExperience } from "interfaces/experience";
 import experience from "../../data/experience.json";
+import { useIsSmallScreen } from "utils";
 
 interface IExperienceProps {
   isPanelActive: boolean;
@@ -21,6 +22,7 @@ function Experience({ isPanelActive }: IExperienceProps) {
   const contentRefs = useRef<(HTMLParagraphElement | null)[]>([]);
   const selectedExperienceRef = useRef<IExperience>();
   const { experience: experienceData } = experience;
+  const HeadingTag = useIsSmallScreen() ? "h1" : "h3";
 
   const skills = [
     { label: "HTML", image: html5 },
@@ -106,14 +108,13 @@ function Experience({ isPanelActive }: IExperienceProps) {
                 >
                   <div className="card">
                     <>
-                      <h3 className="mb-1 text-primary">
+                      <HeadingTag className="text-primary mb-0">
                         {experience.designation}
-                      </h3>
-                      <p className="text-secondary text-sm">
+                      </HeadingTag>
+                      <p className="text-sm text-gray-400">
                         {experience.address}
                       </p>
                     </>
-
                     <div
                       className="relative max-h-[192px] overflow-hidden"
                       onClick={() => {
@@ -129,10 +130,7 @@ function Experience({ isPanelActive }: IExperienceProps) {
                             return <span key={idx}>{item}</span>;
                           } else {
                             return (
-                              <span
-                                key={idx}
-                                className={item.className as string}
-                              >
+                              <span key={idx} className={item.className}>
                                 {item.text}
                               </span>
                             );
