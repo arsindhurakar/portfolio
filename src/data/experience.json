@@ -1,0 +1,28 @@
+{
+    "experience": [
+        {
+            "id": 1,
+            "designation": "Web Developer",
+            "address": "Baneshwor, Kathmandu",
+            "description": [
+                    {
+                        "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin blandit, mi hendrerit fringilla tempus, risus lectus gravida sapien, aliquam rhoncus lacus massa quis dolor. Nam ligula tortor, condimentum mattis ipsum eu, ullamcorper elementum sem. Etiam sed risus sollicitudin, aliquet nibh sit amet, luctus urna. Aenean a ipsum vitae orci commodo consectetur id tempus odio.",
+                        "className": "text-secondaray"
+                    }
+                ],
+            "year": 2024
+        },
+        {
+            "id": 2,
+            "designation": "Web Developer",
+            "address": "Baneshwor, Kathmandu",
+            "description": [
+                    { 
+                        "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit." ,
+                        "className": "text-secondaray"
+                    }
+                ],
+            "year": 2024
+        }
+    ]
+}

@@ -7,7 +7,6 @@ import { DescriptionModal, StackedCarousel } from "components/shared/molecules";
 export function Projects() {
   const { projects: initialProjects } = projectsData;
   const selectedProjectIndex = initialProjects.length - 1;
-
   const [projects, setProjects] = useState<IProject[]>([]);
   const [selectedProject, setSelectedProject] = useState<IProject>();
   const [isModalOpen, setIsModalOpen] = useState(false);

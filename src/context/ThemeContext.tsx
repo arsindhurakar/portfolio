@@ -9,8 +9,8 @@ export const Theme = {
     primary: getCssVar("--color-primary"),
     secondary: getCssVar("--color-secondary"),
     text: getCssVar("--color-white"),
-    "background-primary": getCssVar("--color-background-primary"),
-    "background-secondary": getCssVar("--color-background-primary"),
+    "background-primary": () => getCssVar("--color-background-primary"),
+    "background-secondary": () => getCssVar("--color-background-secondary"),
   },
 
   fonts: {

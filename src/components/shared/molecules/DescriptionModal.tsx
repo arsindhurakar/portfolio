@@ -5,7 +5,7 @@ interface IDescriptionModalProps {
   isOpen: boolean;
   onClose: () => void;
   title?: string;
-  content: Array<string | { text: string; className?: string }>;
+  content?: Array<string | { text: string; className?: string }>;
 }
 
 export const DescriptionModal = ({
@@ -42,7 +42,7 @@ export const DescriptionModal = ({
             {/* Scrollable content */}
             <div className="p-4 overflow-y-auto flex-1 space-y-4">
               <p>
-                {content.map((item, index) =>
+                {content?.map((item, index) =>
                   typeof item === "string" ? (
                     <span key={index}>{item}</span> // use span instead of p
                   ) : (

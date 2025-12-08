@@ -9,6 +9,7 @@ export default defineConfig({
       components: resolve(__dirname, "src/components"),
       pages: resolve(__dirname, "src/pages"),
       enums: resolve(__dirname, "src/enums"),
+      context: resolve(__dirname, "src/context"),
     },
   },
 });
