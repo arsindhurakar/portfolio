@@ -32,7 +32,6 @@ function Contact({ isPanelActive }: IContactProps) {
 
     if (isPanelActive) {
       timeout = setTimeout(() => setActive(true), 0);
-      console.log("asd");
     } else {
       setTimeout(() => setActive(false), 0);
     }
