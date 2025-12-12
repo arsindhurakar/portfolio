@@ -45,7 +45,7 @@ export const ScrollPanels = forwardRef<ScrollPanelsHandle, IScrollPanelsProps>(
           pin: true,
           pinSpacing: false,
           snap: {
-            snapTo: 1,
+            // snapTo: 1,
             duration: 0.6,
           },
           markers: false,

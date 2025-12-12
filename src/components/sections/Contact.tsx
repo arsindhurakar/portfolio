@@ -2,9 +2,12 @@ import emailjs from "@emailjs/browser";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { BiLogoGmail } from "react-icons/bi";
-import { FaGithub, FaLinkedin } from "react-icons/fa";
+import { FaGithub, FaLinkedin, FaViber, FaWhatsapp } from "react-icons/fa";
 import { Button, Input, Textarea } from "components/shared/atoms";
 import toast from "react-hot-toast";
+import Basket from "components/shared/molecules/Basket";
+import { useIsSmallScreen } from "utils";
+import { IoIosChatbubbles } from "react-icons/io";
 
 interface IContactProps {
   isPanelActive: boolean;
@@ -16,6 +19,7 @@ function Contact({ isPanelActive }: IContactProps) {
     "idle" | "sending" | "success" | "error"
   >("idle");
   const isSendingMessage = status === "sending";
+  const isSmallScreen = useIsSmallScreen();
 
   const channels = [
     { id: "gmail", icon: <BiLogoGmail />, handle: "loremipsum@gmail.com" },
@@ -25,6 +29,21 @@ function Contact({ isPanelActive }: IContactProps) {
       handle: "Lorem",
     },
     { id: "github", icon: <FaGithub />, handle: "lorem123" },
+  ];
+
+  const chats = [
+    {
+      id: "whats-app",
+      icon: <FaWhatsapp />,
+      color: "#25D366",
+      link: "https://wa.me/+9779841234567",
+    },
+    {
+      id: "viber",
+      icon: <FaViber />,
+      color: "#7360f2",
+      link: "viber://chat?number=9779841234567",
+    },
   ];
 
   useEffect(() => {
@@ -145,6 +164,14 @@ function Contact({ isPanelActive }: IContactProps) {
           </motion.div>
         </div>
       </div>
+      <Basket
+        className={`absolute z-50 ${
+          !isSmallScreen ? "left-8 bottom-8" : "right-8 bottom-28"
+        }`}
+        basketIcon={<IoIosChatbubbles />}
+        popups={chats}
+        popupAlign={!isSmallScreen ? "right" : "left"}
+      />
     </div>
   );
 }
