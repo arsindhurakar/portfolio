@@ -36,6 +36,11 @@ body {
   background-color: var(--color-background-primary);
   line-height: 1.5;
   min-height: 100vh;
+  overscroll-behavior: none;
+}
+
+html {
+  overscroll-behavior: none;
 }
 
 a {

@@ -27,7 +27,7 @@ export const Textarea = ({
         id={`textarea-${id}`}
         name={name}
         rows={5}
-        className={`resize-none${className ? ` ${className}` : ""}`}
+        className={`touch-auto resize-none${className ? ` ${className}` : ""}`}
         {...props}
       ></textarea>
     </div>

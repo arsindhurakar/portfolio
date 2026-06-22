@@ -16,7 +16,12 @@ export const Input = ({ id, label, name, ...props }: IInputProps) => {
       >
         {label}
       </label>
-      <input id={`input-${id}`} name={name} {...props} />
+      <input
+        id={`input-${id}`}
+        name={name}
+        className="touch-auto"
+        {...props}
+      />
     </div>
   );
 };

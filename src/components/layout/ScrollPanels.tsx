@@ -2,6 +2,7 @@ import React, {
   forwardRef,
   useEffect,
   useImperativeHandle,
+  useLayoutEffect,
   useRef,
 } from "react";
 import gsap from "gsap";
@@ -19,116 +20,324 @@ export interface ScrollPanelsHandle {
 
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
+const SCROLL_DURATION = 0.6;
+const SWIPE_THRESHOLD = 40;
+const WHEEL_THRESHOLD = 45;
+const WHEEL_RESET_MS = 120;
+const BOUNDARY_LOCK_MS = 150;
+
+const isScrollableAncestor = (element: Element | null) => {
+  let el = element;
+
+  while (el && el !== document.body) {
+    const { overflowY } = window.getComputedStyle(el);
+
+    if (
+      (overflowY === "auto" || overflowY === "scroll") &&
+      el.scrollHeight > el.clientHeight
+    ) {
+      return true;
+    }
+
+    el = el.parentElement;
+  }
+
+  return false;
+};
+
+const isInteractiveTarget = (element: Element | null) => {
+  let el = element;
+
+  while (el && el !== document.body) {
+    const tag = el.tagName;
+
+    if (
+      tag === "INPUT" ||
+      tag === "TEXTAREA" ||
+      tag === "SELECT" ||
+      tag === "BUTTON" ||
+      tag === "A"
+    ) {
+      return true;
+    }
+
+    el = el.parentElement;
+  }
+
+  return false;
+};
+
 export const ScrollPanels = forwardRef<ScrollPanelsHandle, IScrollPanelsProps>(
   ({ children, onInternalPanelChange }, ref) => {
     const panelRefs = useRef<HTMLDivElement[]>([]);
     const triggers = useRef<ScrollTrigger[]>([]);
-    const lastPanelIndex = useRef<number>(0);
-    const apiRef = useRef<ScrollPanelsHandle | null>(null);
+    const currentPanelRef = useRef(0);
+    const isAnimatingRef = useRef(false);
+    const scrollTweenRef = useRef<gsap.core.Tween | null>(null);
+    const onChangeRef = useRef(onInternalPanelChange);
     const panels = React.Children.toArray(children);
-    const isScrollingRef = useRef(false);
+    const panelCount = panels.length;
 
-    // Setup ScrollTriggers + wheel-locking
-    useEffect(() => {
-      // Kill previous triggers
+    onChangeRef.current = onInternalPanelChange;
+
+    const getPanelScrollTarget = (index: number) => {
+      const trigger = triggers.current[index];
+      if (trigger) {
+        return trigger.start;
+      }
+
+      return panelRefs.current[index]?.offsetTop ?? index * window.innerHeight;
+    };
+
+    const setCurrentPanel = (index: number) => {
+      if (currentPanelRef.current === index) {
+        return;
+      }
+
+      currentPanelRef.current = index;
+      onChangeRef.current(index);
+    };
+
+    const scrollToPanel = (index: number) => {
+      const clamped = Math.max(0, Math.min(panelCount - 1, index));
+      const trigger = triggers.current[clamped];
+
+      if (!trigger) {
+        isAnimatingRef.current = false;
+        return;
+      }
+
+      ScrollTrigger.refresh();
+
+      scrollTweenRef.current?.kill();
+      isAnimatingRef.current = true;
+
+      scrollTweenRef.current = gsap.to(window, {
+        duration: SCROLL_DURATION,
+        scrollTo: { y: getPanelScrollTarget(clamped), autoKill: false },
+        ease: "power2.inOut",
+        onComplete: () => {
+          isAnimatingRef.current = false;
+          scrollTweenRef.current = null;
+          setCurrentPanel(clamped);
+          ScrollTrigger.refresh();
+        },
+      });
+    };
+
+    const scrollToPanelRef = useRef(scrollToPanel);
+    scrollToPanelRef.current = scrollToPanel;
+
+    useImperativeHandle(ref, () => ({
+      goToPanel: (index: number) => scrollToPanelRef.current(index),
+    }));
+
+    useLayoutEffect(() => {
       triggers.current.forEach((t) => t.kill());
       triggers.current = [];
 
-      /* Create ScrollTrigger instances */
       panelRefs.current.forEach((panel, index) => {
-        const isLast = index === panelRefs.current.length - 1;
+        if (!panel) return;
 
-        const trigger = ScrollTrigger.create({
+        const isLast = index === panelCount - 1;
+
+        triggers.current[index] = ScrollTrigger.create({
           trigger: panel,
           start: "top top",
           end: isLast ? "bottom bottom" : `+=${window.innerHeight}`,
           pin: true,
           pinSpacing: false,
-          snap: {
-            // snapTo: 1,
-            duration: 0.6,
-          },
+          invalidateOnRefresh: true,
           markers: false,
-
-          onEnter: () => {
-            if (lastPanelIndex.current !== index) {
-              lastPanelIndex.current = index;
-              onInternalPanelChange(index);
-            }
-          },
-
-          onEnterBack: () => {
-            if (lastPanelIndex.current !== index) {
-              lastPanelIndex.current = index;
-              onInternalPanelChange(index);
-            }
-          },
         });
-
-        triggers.current[index] = trigger;
       });
 
-      // Wheel Lock: 1 scroll = 1 panel
+      ScrollTrigger.refresh();
+      setCurrentPanel(currentPanelRef.current);
+    }, [panelCount]);
+
+    useEffect(() => {
+      let wheelDelta = 0;
+      let gestureTimer: ReturnType<typeof setTimeout> | null = null;
+      let boundaryLocked = false;
+      let boundaryLockTimer: ReturnType<typeof setTimeout> | null = null;
+
+      const clearGestureTimer = () => {
+        if (gestureTimer) {
+          clearTimeout(gestureTimer);
+          gestureTimer = null;
+        }
+      };
+
+      const clearBoundaryLockTimer = () => {
+        if (boundaryLockTimer) {
+          clearTimeout(boundaryLockTimer);
+          boundaryLockTimer = null;
+        }
+      };
+
+      const lockAfterBoundary = () => {
+        wheelDelta = 0;
+        boundaryLocked = true;
+        clearBoundaryLockTimer();
+        boundaryLockTimer = setTimeout(() => {
+          boundaryLocked = false;
+          wheelDelta = 0;
+          boundaryLockTimer = null;
+        }, BOUNDARY_LOCK_MS);
+      };
+
+      const extendBoundaryLock = () => {
+        clearBoundaryLockTimer();
+        boundaryLockTimer = setTimeout(() => {
+          boundaryLocked = false;
+          wheelDelta = 0;
+          boundaryLockTimer = null;
+        }, BOUNDARY_LOCK_MS);
+      };
+
+      const tryNavigate = (dir: 1 | -1) => {
+        if (isAnimatingRef.current) {
+          return;
+        }
+
+        const next = currentPanelRef.current + dir;
+
+        if (next < 0 || next >= panelCount) {
+          lockAfterBoundary();
+          return;
+        }
+
+        scrollToPanelRef.current(next);
+      };
+
+      const shouldIgnoreTouch = (target: EventTarget | null) => {
+        if (!(target instanceof Element)) {
+          return true;
+        }
+
+        return isInteractiveTarget(target) || isScrollableAncestor(target);
+      };
+
       const handleWheel = (e: WheelEvent) => {
-        if (isScrollingRef.current) {
-          e.preventDefault(); // stop the scroll
-          e.stopPropagation(); // stop event bubbling
+        e.preventDefault();
+
+        if (isAnimatingRef.current) {
+          return;
+        }
+
+        if (boundaryLocked) {
+          extendBoundaryLock();
+          return;
+        }
+
+        wheelDelta += e.deltaY;
+        clearGestureTimer();
+        gestureTimer = setTimeout(() => {
+          wheelDelta = 0;
+          gestureTimer = null;
+        }, WHEEL_RESET_MS);
+
+        if (Math.abs(wheelDelta) < WHEEL_THRESHOLD) {
+          return;
+        }
+
+        const dir = wheelDelta > 0 ? 1 : -1;
+        wheelDelta = 0;
+        clearGestureTimer();
+        tryNavigate(dir);
+      };
+
+      let touchStartY = 0;
+      let touchStartX = 0;
+      let touchActive = false;
+
+      const handleTouchStart = (e: TouchEvent) => {
+        if (shouldIgnoreTouch(e.target) || e.touches.length !== 1) {
+          touchActive = false;
+          return;
+        }
+
+        touchActive = true;
+        touchStartY = e.touches[0].clientY;
+        touchStartX = e.touches[0].clientX;
+      };
+
+      const handleTouchMove = (e: TouchEvent) => {
+        if (!touchActive || shouldIgnoreTouch(e.target)) {
           return;
         }
 
         e.preventDefault();
-        isScrollingRef.current = true;
+      };
 
-        const dir = e.deltaY > 0 ? 1 : -1;
-        const next = Math.max(
-          0,
-          Math.min(panelRefs.current.length - 1, lastPanelIndex.current + dir)
-        );
+      const handleTouchEnd = (e: TouchEvent) => {
+        if (!touchActive || shouldIgnoreTouch(e.target)) {
+          touchActive = false;
+          return;
+        }
 
-        apiRef.current?.goToPanel(next);
+        touchActive = false;
 
-        // unlock wheel after animation
-        setTimeout(() => {
-          isScrollingRef.current = false;
-        }, 600);
+        const deltaY = touchStartY - e.changedTouches[0].clientY;
+        const deltaX = touchStartX - e.changedTouches[0].clientX;
+
+        if (Math.abs(deltaX) > Math.abs(deltaY)) {
+          return;
+        }
+
+        if (Math.abs(deltaY) < SWIPE_THRESHOLD) {
+          return;
+        }
+
+        tryNavigate(deltaY > 0 ? 1 : -1);
+      };
+
+      const handleTouchCancel = () => {
+        touchActive = false;
+      };
+
+      const handleResize = () => {
+        ScrollTrigger.refresh();
       };
 
       window.addEventListener("wheel", handleWheel, { passive: false });
+      window.addEventListener("touchstart", handleTouchStart, { passive: true });
+      window.addEventListener("touchmove", handleTouchMove, { passive: false });
+      window.addEventListener("touchend", handleTouchEnd, { passive: true });
+      window.addEventListener("touchcancel", handleTouchCancel, {
+        passive: true,
+      });
+      window.addEventListener("resize", handleResize);
 
       return () => {
+        clearGestureTimer();
+        clearBoundaryLockTimer();
+        scrollTweenRef.current?.kill();
+        window.removeEventListener("wheel", handleWheel);
+        window.removeEventListener("touchstart", handleTouchStart);
+        window.removeEventListener("touchmove", handleTouchMove);
+        window.removeEventListener("touchend", handleTouchEnd);
+        window.removeEventListener("touchcancel", handleTouchCancel);
+        window.removeEventListener("resize", handleResize);
+      };
+    }, [panelCount]);
+
+    useEffect(() => {
+      return () => {
+        scrollTweenRef.current?.kill();
         triggers.current.forEach((t) => t.kill());
         triggers.current = [];
-        window.removeEventListener("wheel", handleWheel);
       };
-    }, [onInternalPanelChange]);
-
-    // Expose scroll function to parent
-    useImperativeHandle(ref, () => {
-      const api: ScrollPanelsHandle = {
-        goToPanel(index: number) {
-          const trigger = triggers.current[index];
-
-          if (!trigger) return;
-
-          gsap.to(window, {
-            duration: 0.6,
-            scrollTo: { y: trigger.start + 1, autoKill: false },
-            ease: "power2.inOut",
-          });
-        },
-      };
-
-      apiRef.current = api;
-      return api;
-    });
+    }, [panelCount]);
 
     return (
       <>
         {panels.map((child, i) => (
           <div
             key={i}
-            className={`panel h-screen w-full ${
-              i === panels.length - 1 ? "mb-[2px]" : "mb-0"
+            className={`panel h-screen w-full touch-none ${
+              i === panelCount - 1 ? "mb-[2px]" : "mb-0"
             }`}
             ref={(el) => {
               if (el) panelRefs.current[i] = el;

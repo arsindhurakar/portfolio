@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { About, Contact, Projects, Experience } from "components/sections";
 import { Navbar, ScrollPanels, ScrollPanelsHandle } from "components/layout";
 import { PanelCode } from "enums";
@@ -7,9 +7,13 @@ function Main() {
   const [activePanel, setActivePanel] = useState(0); // track current panel index
   const scrollPanelsRef = useRef<ScrollPanelsHandle>(null);
 
-  const onPanelChange = (index: number) => {
+  const onPanelChange = useCallback((index: number) => {
     scrollPanelsRef.current?.goToPanel(index);
-  };
+  }, []);
+
+  const handleInternalPanelChange = useCallback((index: number) => {
+    setActivePanel(index);
+  }, []);
 
   const getVerticalText = (text: string) =>
     text.split("").map((char, i) => (
@@ -29,9 +33,7 @@ function Main() {
     <div className="relative">
       <Navbar activeIndex={activePanel} handlePanelChange={onPanelChange} />
       <ScrollPanels
-        onInternalPanelChange={(index) => {
-          setActivePanel(index);
-        }}
+        onInternalPanelChange={handleInternalPanelChange}
         ref={scrollPanelsRef}
       >
         <About
